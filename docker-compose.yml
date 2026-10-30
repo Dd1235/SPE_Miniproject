@@ -1,0 +1,60 @@
+# Calculator stack: nginx reverse proxy -> 2 replicas of the Spring Boot API.
+#
+#   docker compose up -d --build        # build images and start everything
+#   curl "http://localhost:8085/api/v1/add?a=2&b=3"
+#
+# Variables (override in the shell or a .env file):
+#   IMAGE_TAG     app image tag to run            (default: latest; Jenkins sets the build number)
+#   PROXY_PORT    host port for the proxy         (default: 8085; Jenkins itself uses 8080)
+#   APP_REPLICAS  number of API containers        (default: 2)
+name: calculator
+
+services:
+  app:
+    image: calculator-api:${IMAGE_TAG:-latest}
+    build: .
+    environment:
+      APP_ENVIRONMENT: docker-compose            # shown at /actuator/info
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75 -XX:+ExitOnOutOfMemoryError"
+      LOGGING_LEVEL_ROOT: INFO
+    expose:
+      - "8080"                                   # reachable by the proxy only; no host port
+    deploy:
+      replicas: ${APP_REPLICAS:-2}
+      resources:
+        limits:
+          memory: 512m
+          cpus: "1.0"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/actuator/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 40s
+    networks:
+      - backend
+
+  proxy:
+    image: calculator-proxy:latest
+    build: ./proxy
+    ports:
+      - "${PROXY_PORT:-8085}:80"
+    depends_on:
+      app:
+        condition: service_healthy               # start only once the API reports UP
+        restart: true                            # restart the proxy when the app is redeployed
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - frontend
+      - backend
+
+networks:
+  frontend: {}                                   # proxy <-> host (published port)
+  backend:
+    internal: true                               # app <-> proxy only; no route to the outside
