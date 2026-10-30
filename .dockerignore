@@ -1,0 +1,6 @@
+# Allow-list: the build only needs pom.xml and src/. Everything else
+# (target/, .git/, IDE files, secrets, compose files) stays out of the
+# build context, which keeps builds fast and images free of stray files.
+*
+!pom.xml
+!src/
