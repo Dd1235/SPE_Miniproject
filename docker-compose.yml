@@ -37,7 +37,9 @@ services:
 
   proxy:
     image: calculator-proxy:latest
-    build: ./proxy
+    build:
+      context: ./proxy
+      provenance: false                          # identical rebuilds keep the same image ID
     ports:
       - "${PROXY_PORT:-8085}:80"
     depends_on:
