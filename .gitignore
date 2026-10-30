@@ -1,0 +1,26 @@
+# Build output
+target/
+.mvn/wrapper/maven-wrapper.jar
+
+# Local environment and secrets - never commit these
+.env
+*.env
+*.pem
+*.key
+
+# Logs and OS files
+*.log
+.DS_Store
+
+# IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.classpath
+.project
+.settings/
+.factorypath
+.apt_generated
+.sts4-cache
