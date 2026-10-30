@@ -58,6 +58,12 @@ docker run --rm -p 8080:8080 calculator-api
 curl "http://localhost:8080/api/v1/add?a=2&b=3"
 ```
 
+Or run the published image without building anything:
+
+```bash
+docker run --rm -p 8080:8080 deepya123/calculator-api:latest
+```
+
 **Docker Compose (full stack: Nginx proxy + 2 API replicas):**
 
 ```bash
