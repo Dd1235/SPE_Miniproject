@@ -43,4 +43,9 @@ public class CalculatorController {
 		return calculator.calculate(Operation.DIVIDE, a, b);
 	}
 
+	@GetMapping("/modulo")
+	public CalculationResult modulo(@RequestParam BigDecimal a, @RequestParam BigDecimal b) {
+		return calculator.calculate(Operation.MODULO, a, b);
+	}
+
 }
