@@ -31,15 +31,26 @@ public class CalculatorService {
 			case SUBTRACT -> a.subtract(b);
 			case MULTIPLY -> a.multiply(b);
 			case DIVIDE -> divide(a, b);
+			case MODULO -> modulo(a, b);
 		};
 		return new CalculationResult(operation.key(), normalize(a), normalize(b), normalize(result));
 	}
 
 	private static BigDecimal divide(BigDecimal a, BigDecimal b) {
+		requireNonZeroDivisor(b);
+		return a.divide(b, DIVISION_CONTEXT);
+	}
+
+	/** Remainder of a / b. Like Java's %, the result takes the sign of a: -7 mod 3 = -1. */
+	private static BigDecimal modulo(BigDecimal a, BigDecimal b) {
+		requireNonZeroDivisor(b);
+		return a.remainder(b);
+	}
+
+	private static void requireNonZeroDivisor(BigDecimal b) {
 		if (b.signum() == 0) {
 			throw new DivisionByZeroException();
 		}
-		return a.divide(b, DIVISION_CONTEXT);
 	}
 
 	private static void requireSupported(String parameter, BigDecimal value) {

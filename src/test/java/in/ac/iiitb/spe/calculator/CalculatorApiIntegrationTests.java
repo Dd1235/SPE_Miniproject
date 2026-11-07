@@ -38,7 +38,7 @@ class CalculatorApiIntegrationTests {
 	}
 
 	@ParameterizedTest(name = "GET /api/v1/{0}?a=6&b=3 -> {1}")
-	@CsvSource({ "add, 9", "subtract, 3", "multiply, 18", "divide, 2" })
+	@CsvSource({ "add, 9", "subtract, 3", "multiply, 18", "divide, 2", "modulo, 0" })
 	void everyEndpointComputesItsOperation(String operation, int expected) throws Exception {
 		mvc.perform(get("/api/v1/" + operation).param("a", "6").param("b", "3"))
 			.andExpect(status().isOk())
@@ -61,6 +61,23 @@ class CalculatorApiIntegrationTests {
 			.andExpect(jsonPath("$.status").value(400))
 			.andExpect(jsonPath("$.title").value("Division by zero"))
 			.andExpect(jsonPath("$.instance").value("/api/v1/divide"));
+	}
+
+	@Test
+	void moduloReturnsRemainder() throws Exception {
+		mvc.perform(get("/api/v1/modulo").param("a", "10").param("b", "3"))
+			.andExpect(status().isOk())
+			.andExpect(content().json("""
+					{"operation": "modulo", "a": 10, "b": 3, "result": 1}
+					""", JsonCompareMode.STRICT));
+	}
+
+	@Test
+	void moduloByZeroReturns400ProblemDetail() throws Exception {
+		mvc.perform(get("/api/v1/modulo").param("a", "5").param("b", "0"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.title").value("Division by zero"))
+			.andExpect(jsonPath("$.instance").value("/api/v1/modulo"));
 	}
 
 	@Test

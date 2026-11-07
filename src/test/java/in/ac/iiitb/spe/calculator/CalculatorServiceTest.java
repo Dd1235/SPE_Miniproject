@@ -46,6 +46,25 @@ class CalculatorServiceTest {
 		assertThat(r.result()).isEqualByComparingTo("2.5");
 	}
 
+	@ParameterizedTest(name = "modulo({0}, {1}) = {2}")
+	@CsvSource({
+			"10,   3,   1",
+			"-7,   3,   -1",   // sign follows the dividend, like Java's %
+			"5.5,  2,   1.5",
+			"6,    3,   0",
+	})
+	void computesRemainder(String a, String b, String expected) {
+		CalculationResult r = calc(Operation.MODULO, a, b);
+		assertThat(r.operation()).isEqualTo("modulo");
+		assertThat(r.result()).isEqualByComparingTo(expected);
+	}
+
+	@Test
+	void rejectsModuloByZero() {
+		assertThatThrownBy(() -> calc(Operation.MODULO, "5", "0"))
+				.isInstanceOf(DivisionByZeroException.class);
+	}
+
 	@ParameterizedTest(name = "{0}({1}, {2}) = {3}")
 	@CsvSource({
 			"ADD,      0.1,  0.2,  0.3",  // exact decimals: double would give 0.30000000000000004

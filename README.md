@@ -16,6 +16,7 @@ CSE 816 Software Production Engineering, mini-project (Term I 2026-27).
 | Subtract | `GET /api/v1/subtract?a=2&b=3` | `{"operation":"subtract","a":2,"b":3,"result":-1}` |
 | Multiply | `GET /api/v1/multiply?a=2.5&b=4` | `{"operation":"multiply","a":2.5,"b":4,"result":10}` |
 | Divide | `GET /api/v1/divide?a=10&b=4` | `{"operation":"divide","a":10,"b":4,"result":2.5}` |
+| Modulo | `GET /api/v1/modulo?a=10&b=3` | `{"operation":"modulo","a":10,"b":3,"result":1}` |
 | Health | `GET /actuator/health` | `{"status":"UP", ...}` |
 
 - Numbers may be integers or decimals, and decimal arithmetic is exact
@@ -44,7 +45,7 @@ You need JDK 21 and Maven 3.9+, or just Docker. `./mvnw` works in place of `mvn`
 if Maven isn't installed.
 
 ```bash
-mvn test                        # 31 unit + integration tests; reports in target/surefire-reports
+mvn test                        # 39 unit + integration tests; reports in target/surefire-reports
                                 # coverage report: target/site/jacoco/index.html
 mvn clean package               # builds target/calculator-api.jar
 java -jar target/calculator-api.jar            # http://localhost:8080
