@@ -107,6 +107,9 @@ cleans the workspace.
    address, and add a GitHub webhook pointing to
    `https://<your-ngrok-domain>/github-webhook/` with content type
    `application/json` and push events only.
+   If ngrok is offline, GitHub records the delivery as a 404 and no webhook build
+   starts. Restart ngrok and click *Redeliver* under the webhook's *Recent
+   Deliveries*, or let Poll SCM pick up the commit within about 2 minutes.
 
 ## Repository layout
 
